@@ -7,6 +7,7 @@ import android.location.Geocoder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.List;
 
 public class maptest extends FragmentActivity implements OnMapReadyCallback {
@@ -71,7 +73,8 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
         String location = location_tf.getText().toString();
         List<Address> addressList = null;
 
-        if (location != null || !location.equals(""))
+        Log.i("location",": "+location);
+        if (location != null && !location.equals(""))
         {
             Geocoder geocoder = new Geocoder(this);
             try {
@@ -90,4 +93,7 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
-}
+
+    }
+
+
