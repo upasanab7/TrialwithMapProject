@@ -67,7 +67,6 @@
         android:layout_weight="5"
         android:background="#fb2020"
         android:text="Report"
-        android:onClick="onReport"
-        tools:text="Report Fire" />
+        android:onClick="onReport"/>
 
 </LinearLayout>

@@ -4,6 +4,10 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -14,22 +18,37 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
-public class maptest extends FragmentActivity implements OnMapReadyCallback {
+public class maptest extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private GoogleMap mMap;
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    LocationRequest mLocationRequest;
 
     private Button mreport;
+    private LatLng pickUpLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +59,30 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-       /* mreport=(Button)findViewById(R.id.reportbtn);
-       /* mreport.setOnClickListener(new View.OnClickListener() {
+        mreport = (Button) findViewById(R.id.reportbtn);
+        mreport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String userid=Firebase
+
+                String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("customer").child("customerid").child(userid);
+                GeoFire geoFire = new GeoFire(ref);
+                geoFire.setLocation(userid, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                    @Override
+                    public void onComplete(String key, DatabaseError error) {
+                        if (error != null) {
+                            System.err.println("There was an error saving the location to GeoFire: " + error);
+                        } else {
+                            System.out.println("Location saved on server successfully!");
+                        }
+                    }
+                });
+                pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                mMap.addMarker(new MarkerOptions().position(pickUpLocation));
+                mreport.setText("Reporting....Please don't panic!");
+
             }
-        });*/
+        });
     }
 
 
@@ -63,26 +99,28 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return;
         }
+        buildGoogleApiClient();
         mMap.setMyLocationEnabled(true);
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
     }
 
     public void onSearch(View view) {
         EditText location_tf = (EditText) findViewById(R.id.TFaddress);
         String location = location_tf.getText().toString();
         List<Address> addressList = null;
-        if (location != null && !location.equals(""))
-        {
+        if (location != null && !location.equals("")) {
             Geocoder geocoder = new Geocoder(this);
             try {
                 addressList = geocoder.getFromLocationName(location, 1);
@@ -94,33 +132,70 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
             LatLng latlng = new LatLng(address.getLatitude(), address.getLongitude());
             mMap.addMarker(new MarkerOptions().position(latlng).title("Marker"));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
-        } else
-        {
+        } else {
             Toast.makeText(getApplicationContext(), "Please enter location", Toast.LENGTH_SHORT).show();
         }
     }
 
- /*public void onReport(View v)
+    /*public void onReport(View view)
     {
-        String sms="Hello";
-        BigInteger bigInteger=new BigInteger("+919874328859");
-        String phone=bigInteger.toString().trim();
+        String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref1 = FirebaseDatabase.getInstance().getReference().child("CustomerID").child("Latitude").child(userid);
+        DatabaseReference ref2=FirebaseDatabase.getInstance().getReference().child("CustomerID").child("Longitude").child()
+        GeoFire geoFire=new GeoFire(ref1);
+        geoFire.setLocation(userid,new GeoLocation(mLastLocation.getLatitude(),mLastLocation.getLongitude()));
+        pickUpLocation = new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
+        mMap.addMarker(new MarkerOptions().position(pickUpLocation));
+        mreport.setText("Reporting....Please don't panic!");
 
-        try
-        {
-
-            SmsManager smsManager=SmsManager.getDefault();
-            smsManager.sendTextMessage(phone.trim(),null,sms.trim(),null,null);
-            Toast.makeText(getApplicationContext(), "SMS sent", Toast.LENGTH_SHORT).show();
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "SMS failed", Toast.LENGTH_SHORT).show();
-
-        }
+        DatabaseReference current_user_db  = FirebaseDatabase.getInstance().getReference().child("users").child("user").child(user_id);
+        current_user_db.setValue(true);
     }*/
+
+
+    @Override
+    public void onLocationChanged(Location location) {
+       /*FirebaseApp busCoords = mRef.child("Location");
+        busCoords.pus().setValue(location.getLatitude()+ ",   "+location.getLongitude());*/
+        mLastLocation = location;
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+
+
     }
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+    }
+
+
+   @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+    }
+
 
 
