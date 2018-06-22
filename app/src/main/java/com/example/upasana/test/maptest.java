@@ -41,7 +41,7 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
        /* mreport=(Button)findViewById(R.id.reportbtn);
-        mreport.setOnClickListener(new View.OnClickListener() {
+       /* mreport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String userid=Firebase
@@ -81,8 +81,6 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
         EditText location_tf = (EditText) findViewById(R.id.TFaddress);
         String location = location_tf.getText().toString();
         List<Address> addressList = null;
-
-        Log.i("location",": "+location);
         if (location != null && !location.equals(""))
         {
             Geocoder geocoder = new Geocoder(this);
@@ -102,7 +100,7 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
- public void onReport(View v)
+ /*public void onReport(View v)
     {
         String sms="Hello";
         BigInteger bigInteger=new BigInteger("+919874328859");
@@ -122,7 +120,7 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
             Toast.makeText(getApplicationContext(), "SMS failed", Toast.LENGTH_SHORT).show();
 
         }
-    }
+    }*/
     }
 
 

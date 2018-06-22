@@ -40,8 +40,7 @@
             android:text="@string/abc_searchview_description_search"
             android:textAlignment="center"
             android:textColor="#2d2626"
-            android:textSize="20sp" /> -->
-
+            android:textSize="20sp" />
     </LinearLayout>
 
 
