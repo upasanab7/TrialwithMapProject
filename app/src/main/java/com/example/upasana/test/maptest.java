@@ -7,8 +7,10 @@ import android.location.Geocoder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -27,6 +29,8 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
+    private Button mreport;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +39,14 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+       /* mreport=(Button)findViewById(R.id.reportbtn);
+        mreport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String userid=Firebase
+            }
+        });*/
     }
 
 
@@ -51,10 +63,7 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -93,7 +102,27 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback {
         }
     }
 
+ public void onReport(View v)
+    {
+        String sms="Hello";
+        BigInteger bigInteger=new BigInteger("+919874328859");
+        String phone=bigInteger.toString().trim();
 
+        try
+        {
+
+            SmsManager smsManager=SmsManager.getDefault();
+            smsManager.sendTextMessage(phone.trim(),null,sms.trim(),null,null);
+            Toast.makeText(getApplicationContext(), "SMS sent", Toast.LENGTH_SHORT).show();
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "SMS failed", Toast.LENGTH_SHORT).show();
+
+        }
+    }
     }
 
 

@@ -38,7 +38,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".maptest"></activity>
+        <activity android:name=".maptest" />
+        <activity android:name=".UserRegistration"></activity>
     </application>
 
 </manifest>
