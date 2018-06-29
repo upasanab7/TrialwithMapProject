@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -49,6 +51,7 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback, Goo
 
     private Button mreport;
     private LatLng pickUpLocation;
+    String location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +84,65 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback, Goo
                 mMap.addMarker(new MarkerOptions().position(pickUpLocation));
                 mreport.setText("Reporting....Please don't panic!");
 
+                getNearestFireStation();
+
+
             }
         });
     }
+    private int radius=1;
+    private Boolean fireStationFound=false;
+    private String fireStationId;
+
+    private void getNearestFireStation()
+    {
+        DatabaseReference fireStationLocation=FirebaseDatabase.getInstance().getReference().child("firestations").child("firestation");
+        GeoFire geoFire=new GeoFire(fireStationLocation);
+        GeoQuery geoQuery=geoFire.queryAtLocation(new GeoLocation(pickUpLocation.latitude, pickUpLocation.longitude),radius);
+        geoQuery.removeAllListeners();
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                if(!fireStationFound) {
+                    fireStationFound = true;
+                    fireStationId=key;
+                    if(fireStationFound==true) {
+                        mreport.setText("Reported successfully");
+                        mreport.setBackgroundColor(getResources().getColor(R.color.Green));
+                    }
+
+                }
+
+
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+                if (!fireStationFound)
+                {
+                    radius++;
+                    getNearestFireStation();
+                }
+
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
+    }
+
 
 
     /**
@@ -118,7 +177,7 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback, Goo
 
     public void onSearch(View view) {
         EditText location_tf = (EditText) findViewById(R.id.TFaddress);
-        String location = location_tf.getText().toString();
+        location = location_tf.getText().toString();
         List<Address> addressList = null;
         if (location != null && !location.equals("")) {
             Geocoder geocoder = new Geocoder(this);

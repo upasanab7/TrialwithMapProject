@@ -1,72 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:orientation="vertical"
+xmlns:tools="http://schemas.android.com/tools"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:weightSum="1"
+android:focusable="true">
+
+<LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:weightSum="1"
-    android:focusable="true">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/TFaddress"
-            android:layout_width="260dp"
-            android:layout_height="match_parent"
-            android:layout_alignBottom="@+id/searchbtn"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:background="#fdfcfc"
-            android:hint="Enter location"
-            android:inputType="none" />
-
-        <Button
-            android:id="@+id/searchbtn"
-            android:layout_width="102dp"
-            android:layout_height="90dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="right"
-            android:layout_marginBottom="0dp"
-            android:layout_marginTop="0dp"
-            android:background="#4491ee"
-            android:onClick="onSearch"
-            android:text="@string/abc_searchview_description_search"
-            android:textAlignment="center"
-            android:textColor="#2d2626"
-            android:textSize="20sp" />
-    </LinearLayout>
-
-
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
+    <EditText
+        android:id="@+id/TFaddress"
+        android:layout_width="260dp"
         android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/searchbtn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_weight="1"
-        tools:context=".maptest" />
+        android:background="#fdfcfc"
+        android:hint="Enter location"
+        android:inputType="none" />
 
     <Button
-        android:id="@+id/reportbtn"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
+        android:id="@+id/searchbtn"
+        android:layout_width="102dp"
+        android:layout_height="90dp"
+        android:layout_weight="4"
         android:layout_alignParentRight="true"
-        android:layout_alignParentStart="true"
-        android:layout_gravity="bottom"
-        android:layout_weight="5"
-        android:background="#fb2020"
-        android:text="Report"
-        android:onClick="onReport"/>
+        android:layout_alignParentTop="true"
+        android:layout_gravity="right"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="0dp"
+        android:background="#4491ee"
+        android:onClick="onSearch"
+        android:text="@string/abc_searchview_description_search"
+        android:textAlignment="center"
+        android:textColor="#2d2626"
+        android:textSize="20sp" />
+</LinearLayout>
+
+
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/map"
+    android:name="com.google.android.gms.maps.SupportMapFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    tools:context=".maptest" />
+
+<Button
+    android:id="@+id/reportbtn"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentEnd="true"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentRight="true"
+    android:layout_alignParentStart="true"
+    android:layout_gravity="bottom"
+    android:layout_weight="5"
+    android:background="#fb2020"
+    android:text="Report"
+    android:onClick="onReport"/>
 
 </LinearLayout>
