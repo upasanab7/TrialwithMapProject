@@ -12,7 +12,7 @@
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="email"
+        android:hint="Email"
         android:inputType="textEmailAddress"
         tools:ignore="HardcodedText" />
 
@@ -20,8 +20,16 @@
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name"
+        android:hint="Full Name"
         android:inputType="textPersonName"
+        tools:ignore="HardcodedText"/>
+
+    <EditText
+        android:id="@+id/phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Phone Number"
+        android:inputType="phone"
         tools:ignore="HardcodedText"/>
 
     <Button

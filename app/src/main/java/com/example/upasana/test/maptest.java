@@ -1,6 +1,8 @@
 package com.example.upasana.test;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -40,6 +42,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class maptest extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
@@ -66,29 +72,52 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback, Goo
         mreport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(maptest.this);
+                    alertDialogBuilder.setMessage("False fire report is a PUNISHABLE OFFENCE! Are you sure you want to report?");
+                    alertDialogBuilder.setPositiveButton("Yes",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    Calendar cal = Calendar.getInstance();
+                                    Date currentDate = cal.getTime();
 
-                String userid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("customer").child("customerid").child(userid);
-                GeoFire geoFire = new GeoFire(ref);
-                geoFire.setLocation(userid, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
-                    @Override
-                    public void onComplete(String key, DatabaseError error) {
-                        if (error != null) {
-                            System.err.println("There was an error saving the location to GeoFire: " + error);
-                        } else {
-                            System.out.println("Location saved on server successfully!");
+                                    DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                                    String formattedDateString = formatter.format(currentDate);
+                                   String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Fire Reports");
+                                    GeoFire geoFire = new GeoFire(ref);
+                                    geoFire.setLocation(user_id, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), new GeoFire.CompletionListener() {
+                                        @Override
+                                        public void onComplete(String key, DatabaseError error) {
+                                            if (error != null) {
+                                                System.err.println("There was an error saving the location to GeoFire: " + error);
+                                            } else {
+                                                System.out.println("Location saved on server successfully!");
+                                            }
+                                        }
+                                    });
+                                    DatabaseReference dateref = FirebaseDatabase.getInstance().getReference().child("Fire Reports").child(user_id).child("Date");
+                                    dateref.setValue(formattedDateString);
+                                    pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                                    mMap.addMarker(new MarkerOptions().position(pickUpLocation));
+                                    mreport.setText("Reporting....Please don't panic!");
+
+                                    getNearestFireStation();
+
+                                }
+                            });
+
+                    alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getApplicationContext(), "Report request cancelled", Toast.LENGTH_SHORT).show();
                         }
-                    }
+                    });
+
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }
                 });
-                pickUpLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(pickUpLocation));
-                mreport.setText("Reporting....Please don't panic!");
-
-                getNearestFireStation();
-
-
-            }
-        });
     }
     private int radius=1;
     private Boolean fireStationFound=false;
@@ -110,6 +139,8 @@ public class maptest extends FragmentActivity implements OnMapReadyCallback, Goo
                         mreport.setText("Reported successfully");
                         mreport.setBackgroundColor(getResources().getColor(R.color.Green));
                     }
+
+                   //DatabaseReference tenderref=FirebaseDatabase.getInstance().getReference().child()
 
                 }
 
